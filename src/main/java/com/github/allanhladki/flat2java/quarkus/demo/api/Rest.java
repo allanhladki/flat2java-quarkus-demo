@@ -14,14 +14,14 @@ import org.slf4j.LoggerFactory;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class Rest {
-  
+
     private static final Logger LOG = LoggerFactory.getLogger(Rest.class);
 
     @POST
     @Path("/serialize")
     @Consumes(MediaType.TEXT_PLAIN)
     public Response serialize(String plainText) {
-        LOG.info("Received serialization request");
+        LOG.info("Received serialization request: {}", plainText);
         // TODO: Serialization logic
         return Response.ok().build();
     }
@@ -29,7 +29,7 @@ public class Rest {
     @POST
     @Path("/deserialize")
     public Response deserialize(String json) {
-        LOG.info("Received deserialization request");
+        LOG.info("Received deserialization request: {}", json);
         // TODO: Deserialization logic
         return Response.ok().build();
     }
