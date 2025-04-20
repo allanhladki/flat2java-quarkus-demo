@@ -2,30 +2,46 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
+
+  <!-- Project Information -->
   <groupId>com.github.allanhladki.flat2java.quarkus.demo</groupId>
   <artifactId>flat2java-quarkus-demo</artifactId>
   <version>1.0.0-SNAPSHOT</version>
+
+  <!-- Project Properties -->
   <properties>
+  
+    <!-- Java and Build Properties -->
     <compiler-plugin.version>3.11.0</compiler-plugin.version>
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    
+    <!-- Quarkus Properties -->
     <quarkus.platform.version>3.20.0</quarkus.platform.version>
+    
+    <!-- Test Properties -->
     <skipITs>true</skipITs>
   </properties>
+
+  <!-- Dependency Management -->
   <dependencyManagement>
     <dependencies>
+
+      <!-- Quarkus BOM -->
       <dependency>
         <groupId>io.quarkus.platform</groupId>
         <artifactId>quarkus-bom</artifactId>
         <version>${quarkus.platform.version}</version>
         <type>pom</type>
         <scope>import</scope>
+        
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <dependencies>
 
-    <!-- Quarkus dependencies for Rest -->
+  <!-- Project Dependencies -->
+  <dependencies>
+    <!-- Quarkus Core Dependencies -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-rest-jackson</artifactId>
@@ -37,16 +53,18 @@
       <version>${quarkus.platform.version}</version>
     </dependency>
 
-    <!-- Logging -->
+    <!-- Logging Dependencies -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>2.0.12</version>
     </dependency>
-    
   </dependencies>
+
+  <!-- Build Configuration -->
   <build>
     <plugins>
+      <!-- Quarkus Maven Plugin -->
       <plugin>
         <groupId>io.quarkus.platform</groupId>
         <artifactId>quarkus-maven-plugin</artifactId>
@@ -62,6 +80,8 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- Maven Compiler Plugin -->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${compiler-plugin.version}</version>
@@ -71,6 +91,8 @@
           </compilerArgs>
         </configuration>
       </plugin>
+
+      <!-- Code Formatting Plugin -->
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
