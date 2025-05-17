@@ -41,6 +41,7 @@
 
   <!-- Project Dependencies -->
   <dependencies>
+
     <!-- Quarkus Core Dependencies -->
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -52,6 +53,28 @@
       <artifactId>quarkus-arc</artifactId>
       <version>${quarkus.platform.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-openapi</artifactId>
+      <version>${quarkus.platform.version}</version>
+    </dependency>
+
+    <!-- Lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.30</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Flat2Java Dependency -->
+    <dependency>
+      <groupId>com.github.allanhladki.flat2java</groupId>
+      <artifactId>flat2java</artifactId>
+      <version>0.0.1-1</version>
+      <scope>system</scope>
+      <systemPath>${user.home}/.m2/repository/com/github/allanhladki/flat2java/flat2java/0.0.1-1/flat2java-0.0.1-1.jar</systemPath>
+    </dependency>
 
     <!-- Logging Dependencies -->
     <dependency>
@@ -59,6 +82,7 @@
       <artifactId>slf4j-api</artifactId>
       <version>2.0.12</version>
     </dependency>
+
   </dependencies>
 
   <!-- Build Configuration -->
