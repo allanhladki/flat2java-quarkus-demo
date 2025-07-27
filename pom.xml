@@ -70,10 +70,10 @@
     <!-- Flat2Java Dependency -->
     <dependency>
       <groupId>com.github.allanhladki.flat2java</groupId>
-      <artifactId>flat2java</artifactId>
-      <version>0.0.1-1</version>
+      <artifactId>flat2java-core</artifactId>
+      <version>0.0.1-2</version>
       <scope>system</scope>
-      <systemPath>${user.home}/.m2/repository/com/github/allanhladki/flat2java/flat2java/0.0.1-1/flat2java-0.0.1-1.jar</systemPath>
+      <systemPath>${user.home}/.m2/repository/com/github/allanhladki/flat2java/flat2java-core/0.0.1-2/flat2java-core-0.0.1-2.jar</systemPath>
     </dependency>
 
     <!-- Logging Dependencies -->
