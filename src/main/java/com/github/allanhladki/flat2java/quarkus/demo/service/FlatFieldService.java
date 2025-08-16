@@ -1,35 +1,46 @@
 package com.github.allanhladki.flat2java.quarkus.demo.service;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.allanhladki.flat2java.core.FieldMetadata;
-import com.github.allanhladki.flat2java.core.FieldMetadataExtractor;
+import com.github.allanhladki.flat2java.interfaces.ObjectDeserializationInterface;
+import com.github.allanhladki.flat2java.interfaces.ObjectSerializationInterface;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class FlatFieldService {
 
     private static final Logger logger = LoggerFactory.getLogger(FlatFieldService.class);
 
-    public void toPojo(String plainText, Class<?> clazz){
+    @Inject
+    private ObjectDeserializationInterface objectDeserializer;
 
-        List<FieldMetadata> metadata = FieldMetadataExtractor.extract(clazz);
+    @Inject
+    private ObjectSerializationInterface objectSerializer;
 
-        metadata.forEach(field -> logger.debug("Field: {}", field));
-
+    public <T> T toPojo(String plainText, Class<T> clazz) {
+        try {
+            logger.info("Converting flat text to POJO for class: {}", clazz.getSimpleName());
+            T result = objectDeserializer.deserialize(plainText, clazz);
+            logger.info("Successfully converted flat text to POJO: {}", result != null ? "success" : "null result");
+            return result;
+        } catch (Exception e) {
+            logger.error("Error converting flat text to POJO: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to convert flat text to POJO", e);
+        }
     }
 
-    public <T> void fromPojo(T pojo){
-
-        List<FieldMetadata> metadata = FieldMetadataExtractor.extract(pojo.getClass());
-
-        metadata.forEach(field -> logger.debug("Field: {}", field));
-
+    public <T> String fromPojo(T pojo) {
+        try {
+            logger.info("Converting POJO to flat text: {}", pojo != null ? pojo.getClass().getSimpleName() : "null");
+            String result = objectSerializer.serialize(pojo);
+            logger.info("Successfully converted POJO to flat text, length: {}", result != null ? result.length() : 0);
+            return result;
+        } catch (Exception e) {
+            logger.error("Error converting POJO to flat text: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to convert POJO to flat text", e);
+        }
     }
-
-
 }

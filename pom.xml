@@ -6,7 +6,7 @@
   <!-- Project Information -->
   <groupId>com.github.allanhladki.flat2java</groupId>
   <artifactId>flat2java-quarkus-demo</artifactId>
-  <version>1.0.0-1</version>
+  <version>0.0.1-rc1</version>
 
   <!-- Project Properties -->
   <properties>
@@ -21,6 +21,10 @@
     
     <!-- Test Properties -->
     <skipITs>true</skipITs>
+
+    <!-- Flat2Java version -->
+    <flat2java.version>0.0.1-rc1</flat2java.version>
+
   </properties>
 
   <!-- Dependency Management -->
@@ -71,9 +75,13 @@
     <dependency>
       <groupId>com.github.allanhladki.flat2java</groupId>
       <artifactId>flat2java-core</artifactId>
-      <version>0.0.1-2</version>
-      <scope>system</scope>
-      <systemPath>${user.home}/.m2/repository/com/github/allanhladki/flat2java/flat2java-core/0.0.1-2/flat2java-core-0.0.1-2.jar</systemPath>
+      <version>${flat2java.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.allanhladki.flat2java</groupId>
+      <artifactId>flat2java-processor</artifactId>
+      <version>${flat2java.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Logging Dependencies -->
