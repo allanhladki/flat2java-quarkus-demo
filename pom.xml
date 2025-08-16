@@ -6,7 +6,7 @@
   <!-- Project Information -->
   <groupId>com.github.allanhladki.flat2java</groupId>
   <artifactId>flat2java-quarkus-demo</artifactId>
-  <version>0.0.1-rc1</version>
+  <version>0.0.1-rc2</version>
 
   <!-- Project Properties -->
   <properties>
@@ -23,7 +23,7 @@
     <skipITs>true</skipITs>
 
     <!-- Flat2Java version -->
-    <flat2java.version>0.0.1-rc1</flat2java.version>
+    <flat2java.version>0.0.1-rc2</flat2java.version>
 
   </properties>
 
@@ -62,6 +62,11 @@
       <artifactId>quarkus-smallrye-openapi</artifactId>
       <version>${quarkus.platform.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-health</artifactId>
+      <version>${quarkus.platform.version}</version>
+    </dependency>
 
     <!-- Lombok -->
     <dependency>
@@ -83,12 +88,30 @@
       <version>${flat2java.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.github.allanhladki.flat2java</groupId>
+      <artifactId>flat2java-quarkus</artifactId>
+      <version>${flat2java.version}</version>
+    </dependency>
 
     <!-- Logging Dependencies -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>2.0.12</version>
+    </dependency>
+
+    <!-- Test Dependencies -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit5</artifactId>
+      <version>${quarkus.platform.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>

@@ -9,12 +9,14 @@ import java.util.UUID;
 import com.github.allanhladki.flat2java.markers.FlatField;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
 @ToString
 public class SampleModel {
 
+    @EqualsAndHashCode.Exclude
     private final UUID uuid = UUID.randomUUID();
     
     @FlatField(length = 30)
