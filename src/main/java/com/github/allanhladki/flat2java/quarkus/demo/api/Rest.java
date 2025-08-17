@@ -37,7 +37,7 @@ public class Rest {
 
     @POST
     @Path("/serialize")
-    @Consumes(MediaType.TEXT_PLAIN + ";charset=UTF-8")
+    @Consumes(MediaType.TEXT_PLAIN + "; charset=UTF-8")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(
         summary = "Serialize flat file content to POJO",
@@ -61,7 +61,7 @@ public class Rest {
     @POST
     @Path("/deserialize")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN + ";charset=UTF-8")
+    @Produces(MediaType.TEXT_PLAIN + "; charset=UTF-8")
     @Operation(
         summary = "Deserialize POJO to flat file content",
         description = "Converts a SampleModel object into a flat file string"
@@ -69,7 +69,7 @@ public class Rest {
     @APIResponse(
         responseCode = "200",
         description = "Successfully deserialized the POJO",
-        content = @Content(mediaType = MediaType.TEXT_PLAIN + ";charset=UTF-8")
+        content = @Content(mediaType = MediaType.TEXT_PLAIN)
     )
     @APIResponse(
         responseCode = "400",

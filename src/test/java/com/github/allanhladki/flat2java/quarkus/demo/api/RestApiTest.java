@@ -41,7 +41,7 @@ public class RestApiTest {
         String flatText = TestFixtures.VALID_FLAT_TEXT;
         
         SampleModel result = given()
-            .contentType(ContentType.TEXT)
+            .contentType(ContentType.TEXT + "; charset=UTF-8")
             .body(flatText)
         .when()
             .post(SERIALIZE_PATH)
@@ -60,7 +60,7 @@ public class RestApiTest {
         String flatText = TestFixtures.VALID_FLAT_TEXT_2;
         
         SampleModel result = given()
-            .contentType(ContentType.TEXT)
+            .contentType(ContentType.TEXT + "; charset=UTF-8")
             .body(flatText)
         .when()
             .post(SERIALIZE_PATH)
@@ -79,7 +79,7 @@ public class RestApiTest {
         String invalidFlatText = "InvalidFormatTextThatIsTooShort";
         
         ErrorResponse errorResponse = given()
-            .contentType(ContentType.TEXT)
+            .contentType(ContentType.TEXT + "; charset=UTF-8")
             .body(invalidFlatText)
         .when()
             .post(SERIALIZE_PATH)
@@ -106,7 +106,7 @@ public class RestApiTest {
             .post(DESERIALIZE_PATH)
         .then()
             .statusCode(Status.OK.getStatusCode())
-            .contentType(ContentType.TEXT)
+            .contentType(ContentType.TEXT + "; charset=UTF-8")
             .extract().response()
         .getBody().asString();
         
@@ -115,7 +115,7 @@ public class RestApiTest {
         
         // Verify the flat text can be deserialized back to the same model
         SampleModel deserialized = given()
-            .contentType(ContentType.TEXT)
+            .contentType(ContentType.TEXT + "; charset=UTF-8")
             .body(result)
         .when()
             .post(SERIALIZE_PATH)
@@ -138,7 +138,7 @@ public class RestApiTest {
             .post(DESERIALIZE_PATH)
         .then()
             .statusCode(Status.OK.getStatusCode())
-            .contentType(ContentType.TEXT)
+            .contentType(ContentType.TEXT + "; charset=UTF-8")
             .extract().response()
         .getBody().asString();
         
@@ -147,7 +147,7 @@ public class RestApiTest {
         
         // Verify the flat text can be deserialized back to the same model
         SampleModel deserialized = given()
-            .contentType(ContentType.TEXT)
+            .contentType(ContentType.TEXT + "; charset=UTF-8")
             .body(result)
         .when()
             .post(SERIALIZE_PATH)
@@ -170,7 +170,7 @@ public class RestApiTest {
             .post(DESERIALIZE_PATH)
         .then()
             .statusCode(Status.OK.getStatusCode())
-            .contentType(ContentType.TEXT)
+            .contentType(ContentType.TEXT + "; charset=UTF-8")
             .extract().response()
         .getBody().asString();
         
@@ -179,7 +179,7 @@ public class RestApiTest {
         
         // Verify the flat text can be deserialized back to the same model
         SampleModel deserialized = given()
-            .contentType(ContentType.TEXT)
+            .contentType(ContentType.TEXT + "; charset=UTF-8")
             .body(result)
         .when()
             .post(SERIALIZE_PATH)
@@ -202,7 +202,7 @@ public class RestApiTest {
             .post(DESERIALIZE_PATH)
         .then()
             .statusCode(Status.OK.getStatusCode())
-            .contentType(ContentType.TEXT)
+            .contentType(ContentType.TEXT + "; charset=UTF-8")
             .extract().response()
         .getBody().asString();
         
@@ -211,7 +211,7 @@ public class RestApiTest {
         
         // Verify the flat text can be deserialized back to the same model
         SampleModel deserialized = given()
-            .contentType(ContentType.TEXT)
+            .contentType(ContentType.TEXT + "; charset=UTF-8")
             .body(result)
         .when()
             .post(SERIALIZE_PATH)
@@ -228,7 +228,7 @@ public class RestApiTest {
         String flatText = TestFixtures.BOUNDARY_FLAT_TEXT;
         
         SampleModel result = given()
-            .contentType(ContentType.TEXT)
+            .contentType(ContentType.TEXT + "; charset=UTF-8")
             .body(flatText)
         .when()
             .post(SERIALIZE_PATH)
@@ -247,7 +247,7 @@ public class RestApiTest {
         String flatText = TestFixtures.SPECIAL_CHARS_FLAT_TEXT;
         
         SampleModel result = given()
-            .contentType(ContentType.TEXT)
+            .contentType(ContentType.TEXT + "; charset=UTF-8")
             .body(flatText)
         .when()
             .post(SERIALIZE_PATH)
