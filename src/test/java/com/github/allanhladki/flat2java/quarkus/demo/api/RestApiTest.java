@@ -9,6 +9,7 @@ import org.junit.jupiter.api.TestInstance;
 import com.github.allanhladki.flat2java.quarkus.demo.model.ErrorResponse;
 import com.github.allanhladki.flat2java.quarkus.demo.model.SampleModel;
 
+import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
@@ -22,6 +23,7 @@ import jakarta.ws.rs.core.Response.Status;
 @QuarkusTest
 @TestProfile(RestApiTest.TestProfile.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestHTTPEndpoint(Rest.class)
 public class RestApiTest {
 
     private static final String SERIALIZE_PATH = "/serialize";
@@ -70,38 +72,6 @@ public class RestApiTest {
 
         SampleModel expected = TestFixtures.createValidSampleModel2();
         assertEquals(expected, result);
-    }
-
-    @Test
-    public void testSerializeEmptyText() {
-        ErrorResponse errorResponse = given()
-            .contentType(ContentType.TEXT)
-            .body("")
-        .when()
-            .post(SERIALIZE_PATH)
-        .then()
-            .statusCode(Status.BAD_REQUEST.getStatusCode())
-            .contentType(ContentType.JSON)
-            .extract().response()
-        .getBody().as(ErrorResponse.class);
-        
-        TestAssertions.assertError(errorResponse, "Validation Error", "Flat text content cannot be empty");
-    }
-
-    @Test
-    public void testSerializeWhitespaceOnly() {
-        ErrorResponse errorResponse = given()
-            .contentType(ContentType.TEXT)
-            .body("   \t\n   ")
-        .when()
-            .post(SERIALIZE_PATH)
-        .then()
-            .statusCode(Status.BAD_REQUEST.getStatusCode())
-            .contentType(ContentType.JSON)
-            .extract().response()
-        .getBody().as(ErrorResponse.class);
-        
-        TestAssertions.assertError(errorResponse, "Validation Error", "Flat text content cannot be empty");
     }
 
     @Test

@@ -50,7 +50,7 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
         }
         
         if (exception instanceof NotFoundException) {
-            return createErrorResponse(Response.Status.NOT_FOUND, "Not Found", "The requested resource was not found");
+            return createErrorResponse(Response.Status.NOT_FOUND, "Not Found", "The requested resource or file was not found");
         }
         
         // Handle Flat2Java specific exceptions
