@@ -19,11 +19,11 @@ public class Contact {
 
     @Schema(
             description = "E-mail address, written second (30 columns).",
-            example = "john@example.com")
+            examples = "john@example.com")
     @FlatField(position = 2, length = 30)
     private String email;
 
-    @Schema(description = "Phone number, written first (12 columns).", example = "554133334444")
+    @Schema(description = "Phone number, written first (12 columns).", examples = "554133334444")
     @FlatField(position = 1, length = 12)
     private String phone;
 }

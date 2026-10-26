@@ -16,11 +16,11 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
 public class BaseRecord {
 
-    @Schema(description = "Record type code (4 columns).", example = "SAMP")
+    @Schema(description = "Record type code (4 columns).", examples = "SAMP")
     @FlatField(length = 4)
     private String recordType;
 
-    @Schema(description = "Layout version (2 columns).", example = "1")
+    @Schema(description = "Layout version (2 columns).", examples = "1")
     @FlatField(length = 2)
     private int schemaVersion;
 }

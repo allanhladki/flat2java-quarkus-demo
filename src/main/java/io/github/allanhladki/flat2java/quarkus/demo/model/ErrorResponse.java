@@ -15,11 +15,11 @@ import java.time.Instant;
  */
 @Schema(name = "Error")
 public record ErrorResponse(
-        @Schema(example = "Deserialization Error") String error,
+        @Schema(examples = "Deserialization Error") String error,
         @Schema(
-                        example =
+                        examples =
                                 "SampleModel (columns 1-315): expected 315 characters, but the"
                                         + " record has 5")
                 String message,
-        @Schema(example = "056c94d3-8c88-40c2-881c-3b889175a904") String requestId,
-        @Schema(example = "2026-10-26T04:17:44.720Z") Instant timestamp) {}
+        @Schema(examples = "056c94d3-8c88-40c2-881c-3b889175a904") String requestId,
+        @Schema(examples = "2026-10-26T04:17:44.720Z") Instant timestamp) {}
