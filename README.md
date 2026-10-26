@@ -32,6 +32,7 @@ endpoint.
 
 - [Requirements](#requirements)
 - [Quick start](#quick-start)
+- [Startup](#startup)
 - [Endpoints](#endpoints)
 - [Record layout](#record-layout)
 - [Errors](#errors)
@@ -63,7 +64,8 @@ cd flat2java-quarkus-demo
 ./mvnw quarkus:dev
 ```
 
-The application listens on `http://localhost:8080`. Open the Swagger UI at
+The application listens on `http://localhost:8080`, whose home page has the links, the versions and a
+playground that reads the sample record and writes it back. Open the Swagger UI at
 `http://localhost:8080/swagger-ui`: every endpoint has a list of named examples in its request body
 or `path` parameter. Pick one, press **Execute**, and compare the request and the response. The
 examples named `invalid-length` and `negative-number` fail on purpose, to show the error responses.
@@ -103,6 +105,39 @@ curl -X POST http://localhost:8080/read \
 }
 ```
 
+## Startup
+
+Quarkus prints the banner, and the application then logs its version and the versions of flat2java,
+Quarkus and Java, followed by the addresses of the Swagger UI, the OpenAPI document and the health
+check, and a `curl` command to try:
+
+```text
+  ______    ______                                                            __
+ /      \  /      \                                                          |  \
+|  $$$$$$\|  $$$$$$\      __           ______   __    __   ______    ______  | $$   __  __    __   _______
+| $$_  \$$ \$$__| $$     |  \ ______  /      \ |  \  |  \ |      \  /      \ | $$  /  \|  \  |  \ /       \
+| $$ \     /      $$      \$$|      \|  $$$$$$\| $$  | $$  \$$$$$$\|  $$$$$$\| $$_/  $$| $$  | $$|  $$$$$$$
+| $$$$    |  $$$$$$      |  \ \$$$$$$| $$  | $$| $$  | $$ /      $$| $$   \$$| $$   $$ | $$  | $$ \$$    \
+| $$      | $$_____      | $$        | $$__| $$| $$__/ $$|  $$$$$$$| $$      | $$$$$$\ | $$__/ $$ _\$$$$$$\
+| $$      | $$     \     | $$         \$$    $$ \$$    $$ \$$    $$| $$      | $$  \$$\ \$$    $$|       $$
+ \$$       \$$$$$$$$__   | $$          \$$$$$$$  \$$$$$$   \$$$$$$$ \$$       \$$   \$$  \$$$$$$  \$$$$$$$
+                   |  \__/ $$              | $$
+                    \$$    $$              | $$
+                     \$$$$$$                \$$
+
+                                                                                Powered by Quarkus 3.40.1.1
+2026-10-26 13:36:37.937  INFO          StartupReport              | flat2java Quarkus demo 0.2.0  |  flat2java 0.1.0  |  Quarkus 3.40.1.1  |  Java 21.0.7
+2026-10-26 13:36:37.943  INFO          StartupReport              | Ready in 1.6 s
+2026-10-26 13:36:37.943  INFO          StartupReport              |   Swagger UI  http://localhost:8080/swagger-ui
+2026-10-26 13:36:37.943  INFO          StartupReport              |   OpenAPI     http://localhost:8080/swagger
+2026-10-26 13:36:37.944  INFO          StartupReport              |   Health      http://localhost:8080/health
+2026-10-26 13:36:37.944  INFO          StartupReport              |   Try it      curl -X POST http://localhost:8080/read --data-binary @samples/typical.txt
+```
+
+The home page at `http://localhost:8080/` shows the same versions, links to the pages above, and has
+a playground: the sample record is already filled in, **Read** turns it into JSON and **Write**
+turns the JSON back into a record. The page has no external resources.
+
 ## Endpoints
 
 | Method and path | Request | Response | Purpose |
@@ -110,6 +145,8 @@ curl -X POST http://localhost:8080/read \
 | `POST /read` | `text/plain`, one record | `application/json` | Reads a record into a `SampleModel` |
 | `POST /write` | `application/json`, a `SampleModel` | `text/plain; charset=UTF-8` | Writes a `SampleModel` as a record |
 | `GET /file?path=<path>` | Query parameter `path` | `application/json` | Reads the file at `path` as one record |
+| `GET /` | | HTML | Home page with links, versions and a read/write playground |
+| `GET /info` | | `application/json` | Versions of the application, flat2java, Quarkus and Java |
 | `GET /swagger` | | OpenAPI document (YAML) | API description |
 | `GET /swagger-ui` | | HTML | Swagger UI |
 | `GET /health`, `/health/live`, `/health/ready` | | `application/json` | SmallRye Health checks |
@@ -214,12 +251,16 @@ Errors are returned as JSON:
 | Invalid `@FlatField` mapping or any unexpected exception | 500 | `Flat2Java Error` or `Internal Server Error`, with a generic message |
 
 Messages name the field, never its value, so they can be logged. Every response, including errors,
-has an `X-Request-Id` header. The same ID is the `requestId` of the error and appears in every log
-line of the request:
+has an `X-Request-Id` header. The same ID is the `requestId` of the error, and its first 8
+characters appear in every log line of the request:
 
 ```text
-2026-10-26 11:38:05.816 [a30d30a9-...] WARN  (i.g.a.f.q.d.e.ExceptionMappers): Deserialization Error: ...
+2026-10-26 13:38:05.694  WARN 2a07a8be ExceptionMappers           | Deserialization Error: SampleModel: expected a record of 315 characters, got 5
 ```
+
+The columns are the time, the level, the request ID (empty outside a request), the class and the
+message. Dev mode adds colors; the other profiles write plain text, so the log of a container or of
+CI has no escape codes.
 
 The application never logs the contents of a record.
 
@@ -234,6 +275,9 @@ The application never logs the contents of a record.
 | `quarkus.http.limits.max-body-size` | `64K` | Largest request body |
 | `quarkus.smallrye-openapi.path` | `/swagger` | OpenAPI document path |
 | `quarkus.swagger-ui.always-include` | `true` | Swagger UI in the packaged application |
+| `quarkus.log.console.format` | columns | Time, level, request ID, class and message; colored in dev mode only |
+| `quarkus.log.category."io.quarkus".level` | `WARN` | Hides the "started" line of Quarkus, which `StartupReport` replaces |
+| `quarkus.banner.path` | `banner.txt` | Banner printed at startup |
 | `quarkus.log.category."io.github.allanhladki".level` | `INFO` (`DEBUG` in dev mode) | Application log level |
 | `flat2java.fail-on-string-truncation` | `true` | A text longer than its column is an error; the library default is `false` |
 | other `flat2java.*` | the defaults of `flat2java-quarkus` | [flat2java options](https://github.com/allanhladki/flat2java/blob/master/flat2java-quarkus/README.md#properties) |
@@ -301,8 +345,12 @@ src/main/java/io/github/allanhladki/flat2java/quarkus/demo/
 ├── api/         FlatFileResource (the endpoints) and ApiExamples (the Swagger examples)
 ├── exception/   ExceptionMappers: exceptions to JSON error responses
 ├── filter/      RequestIdFilter: request ID in the log, header and errors
+├── info/        Versions, InfoResource (/info) and StartupReport (versions and addresses at startup)
 ├── model/       SampleModel, BaseRecord, Address, Contact, Item and ErrorResponse
 └── service/     FlatFileService: calls flat2java and reads files
+src/main/resources/
+├── banner.txt                   Startup banner
+└── META-INF/resources/index.html  Home page
 samples/         Example records, one per file
 src/main/docker/ Dockerfiles for the JVM and native images
 ```
