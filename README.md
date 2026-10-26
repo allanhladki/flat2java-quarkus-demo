@@ -126,7 +126,7 @@ check, and a `curl` command to try:
                      \$$$$$$                \$$
 
                                                                                 Powered by Quarkus 3.40.1.1
-2026-10-26 13:36:37.937  INFO          StartupReport              | flat2java Quarkus demo 0.1.0  |  flat2java 0.1.0  |  Quarkus 3.40.1.1  |  Java 21.0.7
+2026-10-26 13:36:37.937  INFO          StartupReport              | flat2java Quarkus demo 0.2.0  |  flat2java 0.1.0  |  Quarkus 3.40.1.1  |  Java 21.0.7
 2026-10-26 13:36:37.943  INFO          StartupReport              | Ready in 1.6 s
 2026-10-26 13:36:37.943  INFO          StartupReport              |   Swagger UI  http://localhost:8080/swagger-ui
 2026-10-26 13:36:37.943  INFO          StartupReport              |   OpenAPI     http://localhost:8080/swagger

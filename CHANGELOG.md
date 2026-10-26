@@ -2,9 +2,11 @@
 
 All notable changes to this project are documented in this file. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
-[Semantic Versioning](https://semver.org/). Versions follow the flat2java version they demonstrate.
+[Semantic Versioning](https://semver.org/). Each version states the flat2java version it is built on.
 
-## [Unreleased]
+## [0.2.0] - 2026-10-26
+
+Built on flat2java 0.1.0 and Quarkus 3.40 (LTS). Requires Java 21.
 
 ### Added
 
@@ -62,5 +64,5 @@ Initial release. Requires Java 21. Built on flat2java 0.1.0 and Quarkus 3.40 (LT
 - Release workflow that creates a signed tag and a GitHub release from a pull request labeled
   `release`.
 
-[Unreleased]: https://github.com/allanhladki/flat2java-quarkus-demo/compare/v0.1.0...HEAD
+[0.2.0]: https://github.com/allanhladki/flat2java-quarkus-demo/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/allanhladki/flat2java-quarkus-demo/releases/tag/v0.1.0
