@@ -50,7 +50,7 @@ jobs:
       - name: Start the container and check readiness
         run: |
           docker run -d --name demo -p 8080:8080 flat2java-quarkus-demo:ci
-          for i in $(seq 1 30); do
+          for _ in $(seq 1 30); do
             if curl -fsS http://localhost:8080/health/ready > /dev/null; then
               echo "The application is ready."
               exit 0
