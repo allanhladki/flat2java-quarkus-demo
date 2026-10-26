@@ -5,6 +5,7 @@ import io.github.allanhladki.flat2java.quarkus.demo.model.SampleModel;
 import io.quarkus.logging.Log;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 
@@ -26,6 +27,7 @@ public class FlatFileService {
 
     private final Flat2Java flat2Java;
 
+    @Inject
     FlatFileService(Flat2Java flat2Java) {
         this.flat2Java = flat2Java;
     }

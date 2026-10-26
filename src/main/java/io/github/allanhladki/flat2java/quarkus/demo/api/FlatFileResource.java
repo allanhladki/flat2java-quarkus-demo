@@ -4,6 +4,7 @@ import io.github.allanhladki.flat2java.quarkus.demo.model.ErrorResponse;
 import io.github.allanhladki.flat2java.quarkus.demo.model.SampleModel;
 import io.github.allanhladki.flat2java.quarkus.demo.service.FlatFileService;
 
+import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -29,6 +30,7 @@ public class FlatFileResource {
 
     private final FlatFileService service;
 
+    @Inject
     FlatFileResource(FlatFileService service) {
         this.service = service;
     }
