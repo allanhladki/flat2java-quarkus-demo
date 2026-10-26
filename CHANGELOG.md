@@ -4,7 +4,7 @@ All notable changes to this project are documented in this file. The format foll
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [Semantic Versioning](https://semver.org/). Versions follow the flat2java version they demonstrate.
 
-## [0.1.0] - Unreleased
+## [0.1.0] - 2026-10-26
 
 Initial release. Requires Java 21. Built on flat2java 0.1.0 and Quarkus 3.40 (LTS).
 
