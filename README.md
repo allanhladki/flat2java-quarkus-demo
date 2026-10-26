@@ -1,218 +1,319 @@
-# Flat2Java Quarkus Demo
+<div align="center">
 
-A demonstration project showcasing the integration of [Flat2Java](https://github.com/allanhladki/flat2java) with Quarkus framework for handling flat file serialization and deserialization in Java applications.
+# flat2java-quarkus-demo
 
-## 🚀 Overview
+**A Quarkus REST application that reads and writes fixed-width records with flat2java.**
 
-This project demonstrates how to use the Flat2Java library within a Quarkus application to:
-- Serialize Java objects to flat file format
-- Deserialize flat file content back to Java objects
-- Handle special characters and UTF-8 encoding properly
-- Provide REST API endpoints for flat file operations
-- Include comprehensive testing with REST Assured
+[![CI](https://github.com/allanhladki/flat2java-quarkus-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/allanhladki/flat2java-quarkus-demo/actions/workflows/ci.yml)
+[![flat2java](https://img.shields.io/maven-central/v/io.github.allanhladki.flat2java/flat2java-quarkus?label=flat2java)](https://central.sonatype.com/namespace/io.github.allanhladki.flat2java)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## ✨ Features
+![Java 21](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)
+![Quarkus](https://img.shields.io/badge/Quarkus-3.40%20LTS-4695EB?logo=quarkus&logoColor=white)
+![Maven](https://img.shields.io/badge/build-Maven-C71A36?logo=apachemaven&logoColor=white)
 
-- **REST API Endpoints**: Serialize/deserialize flat files via HTTP
-- **UTF-8 Support**: Proper handling of special characters (é, í, etc.)
-- **File Operations**: Read and process flat files from the filesystem
-- **OpenAPI Documentation**: Interactive API documentation via Swagger UI
-- **Comprehensive Testing**: Full test coverage with REST Assured
-- **Health Checks**: Application health monitoring
-- **Request Tracing**: Unique request ID tracking for debugging
+[Quick start](#quick-start) ·
+[Endpoints](#endpoints) ·
+[Record layout](#record-layout) ·
+[Configuration](#configuration) ·
+[Changelog](CHANGELOG.md)
 
-## 🛠️ Technology Stack
+</div>
 
-- **Java 21**: Latest LTS version
-- **Quarkus 3.20.0**: Supersonic Subatomic Java framework
-- **Flat2Java 0.0.1-rc2**: Flat file serialization library
-- **Maven**: Build and dependency management
-- **REST Assured**: API testing framework
-- **Lombok**: Reduces boilerplate code
-- **SLF4J**: Logging facade
+---
 
-## 📋 Prerequisites
+This project shows [flat2java](https://github.com/allanhladki/flat2java) in a Quarkus application.
+It exposes REST endpoints that turn a fixed-width text record into JSON and JSON back into a
+record, through the `flat2java-quarkus` CDI integration. The mapped class, `SampleModel`, uses
+every kind of field the library supports, and the Swagger UI has ready-to-run examples for each
+endpoint.
 
-- Java 21 or higher
-- Maven 3.6+
-- Git
+## Contents
 
-## 🚀 Quick Start
+- [Requirements](#requirements)
+- [Quick start](#quick-start)
+- [Endpoints](#endpoints)
+- [Record layout](#record-layout)
+- [Errors](#errors)
+- [Configuration](#configuration)
+- [Running in a container](#running-in-a-container)
+- [Tests](#tests)
+- [Project layout](#project-layout)
+- [Contributing](#contributing)
+- [License](#license)
 
-### 1. Clone the Repository
+## Requirements
+
+| Tool | Version |
+|---|---|
+| JDK | 21 |
+| Maven | Not required: the repository includes the Maven Wrapper (`./mvnw`) |
+| Docker or Podman | Optional, to build and run the container image |
+
+| Component | Version |
+|---|---|
+| Quarkus | 3.40.1.1 (LTS) |
+| flat2java | 0.1.0 |
+
+## Quick start
 
 ```bash
 git clone https://github.com/allanhladki/flat2java-quarkus-demo.git
 cd flat2java-quarkus-demo
+./mvnw quarkus:dev
 ```
 
-### 2. Build the Project
+The application listens on `http://localhost:8080`. Open the Swagger UI at
+`http://localhost:8080/swagger-ui`: every endpoint has a list of named examples in its request body
+or `path` parameter. Pick one, press **Execute**, and compare the request and the response. The
+examples named `invalid-length` and `negative-number` fail on purpose, to show the error responses.
+
+The same from the command line. `$(cat ...)` drops the line terminator at the end of the sample
+file:
 
 ```bash
-mvn clean compile
+curl -X POST http://localhost:8080/read \
+  -H 'Content-Type: text/plain; charset=UTF-8' \
+  --data-binary "$(cat samples/typical.txt)"
 ```
 
-### 3. Run the Application
-
-```bash
-mvn quarkus:dev
-```
-
-The application will start on `http://localhost:8080`
-
-### 4. Access the API
-
-- **Swagger UI**: `http://localhost:8080/swagger-ui`
-- **OpenAPI Spec**: `http://localhost:8080/swagger`
-
-## 📚 API Endpoints
-
-### Serialize Flat File to POJO
-```http
-POST /serialize
-Content-Type: text/plain; charset=UTF-8
-
-José María O'Connor-Smith     00000000420000000000098765432100000000001234500000000000123456789198506152024-06-15T14:30:00.000000
-```
-
-### Deserialize POJO to Flat File
-```http
-POST /deserialize
-Content-Type: application/json
-
+```json
 {
-  "name": "José María O'Connor-Smith",
-  "quantity": 42,
-  "transactionId": 987654321,
-  "amount": 123.45,
-  "accountNumber": 123456789,
-  "birthDate": "1985-06-15",
-  "createdAt": "2024-06-15T14:30:00"
+  "recordType": "SAMP",
+  "schemaVersion": 1,
+  "name": "John Doe",
+  "reference": "REF-1",
+  "priority": 7,
+  "quantity": 100,
+  "transactionId": 1234567890,
+  "amount": 99.99,
+  "accountNumber": 987654321,
+  "birthDate": "1990-01-01",
+  "createdAt": "2024-01-01T12:00:00",
+  "address": {"street": "Rua das Flores 100", "city": "Curitiba", "state": "PR", "postalCode": "80010000"},
+  "contact": {"email": "john@example.com", "phone": "554133334444"},
+  "weeklyHits": [10, 20, 30, 40],
+  "items": [
+    {"sku": "AB-100", "units": 2, "unitPrice": 12.5},
+    {"sku": "CD-200", "units": 1, "unitPrice": 99.9},
+    {"sku": "EF-300", "units": 10, "unitPrice": 0.99}
+  ],
+  "tags": ["new", "vip"],
+  "internalNote": null
 }
 ```
 
-### Read File and Serialize
-```http
-GET /file?path=/path/to/your/flatfile.txt
-```
+## Endpoints
 
-## 🧪 Running Tests
+| Method and path | Request | Response | Purpose |
+|---|---|---|---|
+| `POST /read` | `text/plain`, one record | `application/json` | Reads a record into a `SampleModel` |
+| `POST /write` | `application/json`, a `SampleModel` | `text/plain; charset=UTF-8` | Writes a `SampleModel` as a record |
+| `GET /file?path=<path>` | Query parameter `path` | `application/json` | Reads the file at `path` as one record |
+| `GET /swagger` | | OpenAPI document (YAML) | API description |
+| `GET /swagger-ui` | | HTML | Swagger UI |
+| `GET /health`, `/health/live`, `/health/ready` | | `application/json` | SmallRye Health checks |
 
-### Run All Tests
+The names follow the library: `read` turns a record into an object, `write` turns an object into a
+record.
+
+`POST /write` takes the JSON that `POST /read` returns. The Swagger UI has its examples; from the
+command line, send the object as the body:
+
 ```bash
-mvn test
+curl -X POST http://localhost:8080/write \
+  -H 'Content-Type: application/json' \
+  -d '{"recordType":"SAMP","schemaVersion":1,"name":"John Doe","reference":"REF-1","priority":7,
+       "quantity":100,"transactionId":1234567890,"amount":99.99,"accountNumber":987654321,
+       "birthDate":"1990-01-01","createdAt":"2024-01-01T12:00:00",
+       "address":{"street":"Rua das Flores 100","city":"Curitiba","state":"PR","postalCode":"80010000"},
+       "contact":{"email":"john@example.com","phone":"554133334444"},
+       "weeklyHits":[10,20,30,40],
+       "items":[{"sku":"AB-100","units":2,"unitPrice":12.50},
+                {"sku":"CD-200","units":1,"unitPrice":99.90},
+                {"sku":"EF-300","units":10,"unitPrice":0.99}],
+       "tags":["new","vip"]}'
 ```
 
-### Run Specific Test
+The response is the 315-character record in `samples/typical.txt`.
+
+`GET /file` reads a UTF-8 file with one record and one optional line terminator at its end. A
+relative path is relative to the directory where the application was started. The sample files are
+`samples/typical.txt`, `samples/accents.txt` and `samples/boundary.txt`:
+
 ```bash
-mvn test -Dtest=RestApiTest#testDeserializeSuccessWithSpecialCharsData
+curl 'http://localhost:8080/file?path=samples/accents.txt'
 ```
 
-### Run Tests with Debug Logging
+A file larger than one record is rejected before it is read.
+
+> [!WARNING]
+> `GET /file` reads any file that the application process can read. It exists to demonstrate
+> reading a record from disk. Do not expose this application on a network you do not control.
+
+## Record layout
+
+`SampleModel` maps a record of 315 characters. It extends `BaseRecord`, and flat2java writes the
+fields of a superclass first.
+
+| Field | Columns | Length | Java type | Format |
+|---|---|---|---|---|
+| `recordType` | 1-4 | 4 | `String` (`BaseRecord`) | Left-aligned, padded with spaces |
+| `schemaVersion` | 5-6 | 2 | `int` (`BaseRecord`) | Zero-filled on the left |
+| `name` | 7-36 | 30 | `String` | Left-aligned, padded with spaces |
+| `reference` | 37-44 | 8 | `String` | Padded with `_` (`padding = '_'`) |
+| `priority` | 45-47 | 3 | `int` | Zero-filled on the left |
+| `quantity` | 48-57 | 10 | `Integer` | Zero-filled on the left |
+| `transactionId` | 58-77 | 20 | `Long` | Zero-filled on the left |
+| `amount` | 78-92 | 15 | `BigDecimal` | Two implied decimal places: `000000000009999` is `99.99` |
+| `accountNumber` | 93-112 | 20 | `BigInteger` | Zero-filled on the left |
+| `birthDate` | 113-120 | 8 | `LocalDate` | `yyyyMMdd` |
+| `createdAt` | 121-146 | 26 | `LocalDateTime` | `yyyy-MM-dd'T'HH:mm:ss.SSSSSS` |
+| `address` | 147-191 | 45 | `Address`, a Java record | `street` 20, `city` 15, `state` 2, `postalCode` 8 |
+| `contact` | 192-233 | 42 | `Contact`, a class | `phone` 12, then `email` 30: explicit `position`, the reverse of the declaration order |
+| `weeklyHits` | 234-245 | 12 | `int[]` | 4 elements of 3 columns (`occurs = 4`) |
+| `items` | 246-299 | 54 | `List<Item>` | 3 elements of 18 columns; `Item` is a record: `sku` 6, `units` 3, `unitPrice` 9 with two decimals |
+| `tags` | 300-315 | 16 | `List<String>` | 2 elements of 8 columns |
+| `internalNote` | | | `String` | Not mapped: no `@FlatField`, so it is ignored when writing |
+
+Rules that the examples show:
+
+- Numbers are unsigned and never truncated: a negative number or a number wider than its column
+  fails.
+- Lists and arrays have exactly `occurs` elements.
+- A `String` longer than its column fails with a `400`, because the demo sets
+  `flat2java.fail-on-string-truncation=true`. The library default is to cut the text and log a
+  warning, which loses data silently.
+- Accented characters count as one column each. Requests and responses use UTF-8; a `text/plain`
+  body without a charset is read as UTF-8.
+
+The full rules are in the [flat2java README](https://github.com/allanhladki/flat2java#record-format).
+
+## Errors
+
+Errors are returned as JSON:
+
+```json
+{
+  "error": "Deserialization Error",
+  "message": "SampleModel: expected a record of 315 characters, got 5",
+  "requestId": "a30d30a9-9fe7-4554-9df4-25ded44e86aa",
+  "timestamp": "2026-10-26T14:38:05.816839271Z"
+}
+```
+
+| Cause | Status | `error` |
+|---|---|---|
+| A record that cannot be read: wrong length, letters in a numeric column, an invalid date | 400 | `Deserialization Error` |
+| An object that cannot be written: a negative number, a number or text wider than its column, a list of the wrong size | 400 | `Serialization Error` |
+| Missing or empty body, malformed JSON, missing, invalid or blank `path`, a file larger than one record or not in UTF-8 | 400 | `Bad Request` |
+| No file at `path`, or a path that is a directory; unknown path | 404 | `Not Found` |
+| HTTP method not allowed | 405 | `Method Not Allowed` |
+| Body over 64 KB | 413 | |
+| `Content-Type` not accepted by the endpoint | 415 | `Unsupported Media Type` |
+| Invalid `@FlatField` mapping or any unexpected exception | 500 | `Flat2Java Error` or `Internal Server Error`, with a generic message |
+
+Messages name the field, never its value, so they can be logged. Every response, including errors,
+has an `X-Request-Id` header. The same ID is the `requestId` of the error and appears in every log
+line of the request:
+
+```text
+2026-10-26 11:38:05.816 [a30d30a9-...] WARN  (i.g.a.f.q.d.e.ExceptionMappers): Deserialization Error: ...
+```
+
+The application never logs the contents of a record.
+
+## Configuration
+
+`src/main/resources/application.properties`:
+
+| Property | Value | Purpose |
+|---|---|---|
+| `quarkus.http.port` | `8080` | HTTP port |
+| `quarkus.http.non-application-root-path` | `/` | Serves health and OpenAPI at the root instead of `/q` |
+| `quarkus.http.limits.max-body-size` | `64K` | Largest request body |
+| `quarkus.smallrye-openapi.path` | `/swagger` | OpenAPI document path |
+| `quarkus.swagger-ui.always-include` | `true` | Swagger UI in the packaged application |
+| `quarkus.log.category."io.github.allanhladki".level` | `INFO` (`DEBUG` in dev mode) | Application log level |
+| `flat2java.fail-on-string-truncation` | `true` | A text longer than its column is an error; the library default is `false` |
+| other `flat2java.*` | the defaults of `flat2java-quarkus` | [flat2java options](https://github.com/allanhladki/flat2java/blob/master/flat2java-quarkus/README.md#properties) |
+
+In dev mode the application listens on `localhost` only; in the container, on all interfaces. Any
+property can be overridden with a system property or an environment variable, for example
+`QUARKUS_HTTP_PORT=9090 ./mvnw quarkus:dev`. Tests use `src/test/resources/application.properties`,
+which sets the test port to `8089`.
+
+## Running in a container
+
+The [Dockerfiles](src/main/docker) are the ones generated by Quarkus. The JVM image also contains
+the `samples` directory, so the `path` examples work in it: `samples/typical.txt` is relative to
+`/deployments`.
+
 ```bash
-mvn test -Dquarkus.log.level=DEBUG
+./mvnw package
+docker build -f src/main/docker/Dockerfile.jvm -t flat2java-quarkus-demo:jvm .
+docker run --rm -p 8080:8080 flat2java-quarkus-demo:jvm
 ```
 
-## 📁 Project Structure
+<details>
+<summary>Native executable</summary>
 
-```
-src/
-├── main/
-│   ├── java/
-│   │   └── com/github/allanhladki/flat2java/quarkus/demo/
-│   │       ├── api/           # REST API endpoints
-│   │       ├── filter/        # HTTP filters (encoding, tracing)
-│   │       ├── model/         # Data models with Flat2Java annotations
-│   │       ├── service/       # Business logic services
-│   │       └── exception/     # Custom exception classes
-│   └── resources/
-│       └── application.properties
-├── test/
-│   ├── java/                  # Test classes
-│   └── resources/             # Test configuration
-└── docs/                      # Project documentation
+```bash
+./mvnw package -Dnative
+docker build -f src/main/docker/Dockerfile.native -t flat2java-quarkus-demo:native .
+docker run --rm -p 8080:8080 flat2java-quarkus-demo:native
 ```
 
-## 🔧 Configuration
+Building a native executable requires GraalVM or Mandrel, or a container runtime with
+`-Dquarkus.native.container-build=true`. The mapped classes are annotated with
+`@RegisterForReflection`, as flat2java requires.
 
-### Application Properties
+</details>
 
-Key configuration options in `src/main/resources/application.properties`:
+> [!NOTE]
+> The native build is not covered by CI or by the tests, and the native image does not contain the
+> `samples` directory. The JVM image is built and started on every pull request.
 
-```properties
-# Server configuration
-quarkus.http.port=8080
-quarkus.http.host=0.0.0.0
+## Tests
 
-# Logging
-quarkus.log.level=INFO
-quarkus.log.category."com.github.allanhladki".level=TRACE
-
-# OpenAPI/Swagger
-quarkus.smallrye-openapi.path=/swagger
-quarkus.http.non-application-root-path=/
+```bash
+./mvnw verify
 ```
 
-### Test Configuration
+| Command | What it does |
+|---|---|
+| `./mvnw verify` | Runs the tests, checks formatting, writes the coverage report to `target/jacoco-report` |
+| `./mvnw spotless:apply` | Formats the code (google-java-format, AOSP style) |
+| `./mvnw test -Dtest=RecordEndpointsTest` | Runs one test class |
 
-Test-specific settings in `src/test/resources/application.properties`:
+The tests start the application with `@QuarkusTest` and call it with REST Assured:
 
-```properties
-quarkus.http.test-port=8089
-quarkus.log.level=INFO
-quarkus.log.category."com.github.allanhladki.flat2java.quarkus.demo".level=DEBUG
+| Class | Covers |
+|---|---|
+| `RecordEndpointsTest` | `/read` and `/write`: every example of the Swagger UI in both directions, each kind of field, accents, a text over its column, and every error response |
+| `FileEndpointTest` | `/file`: relative, absolute and accented paths, line terminators, and the missing, blank, invalid, oversized, non-UTF-8 and multi-record cases |
+| `OpenApiTest` | The OpenAPI document and its named examples, the Swagger UI and the health checks |
+
+## Project layout
+
+```text
+src/main/java/io/github/allanhladki/flat2java/quarkus/demo/
+├── api/         FlatFileResource (the endpoints) and ApiExamples (the Swagger examples)
+├── exception/   ExceptionMappers: exceptions to JSON error responses
+├── filter/      RequestIdFilter: request ID in the log, header and errors
+├── model/       SampleModel, BaseRecord, Address, Contact, Item and ErrorResponse
+└── service/     FlatFileService: calls flat2java and reads files
+samples/         Example records, one per file
+src/main/docker/ Dockerfiles for the JVM and native images
 ```
 
-## 🎯 Key Components
+## Contributing
 
-### REST API
-The main API class handling HTTP requests:
+Bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the
+development workflow, and [SECURITY.md](SECURITY.md) to report a vulnerability privately.
+Problems with the library itself belong in the
+[flat2java repository](https://github.com/allanhladki/flat2java/issues).
 
-- `POST /serialize` - Converts flat text to POJO
-- `POST /deserialize` - Converts POJO to flat text
-- `GET /file?path=...` - Reads file and serializes content
+## License
 
-### Character Encoding Filter
-Ensures proper UTF-8 handling for special characters in flat file content.
-
-## 🧪 Testing
-
-The project includes comprehensive testing with:
-
-- **Unit Tests**: Individual component testing
-- **Integration Tests**: Full API endpoint testing
-- **Special Character Tests**: UTF-8 encoding validation
-- **Boundary Tests**: Edge case handling
-- **Error Handling Tests**: Invalid input scenarios
-
-### Test Fixtures
-Predefined test data including:
-- Valid flat text samples
-- Special character examples
-- Boundary value cases
-- Invalid format scenarios
-
-## 📝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add comprehensive tests
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the same license as the Flat2Java library.
-
-## 🤝 Support
-
-For issues and questions:
-- Check the [Flat2Java documentation](https://github.com/allanhladki/flat2java)
-- Review test cases for usage examples
-- Check application logs for detailed error information
-
-## 🔗 Related Links
-
-- [Flat2Java Library](https://github.com/allanhladki/flat2java)
-- [Quarkus Framework](https://quarkus.io/)
-- [REST Assured Testing](https://rest-assured.io/)
+flat2java-quarkus-demo is released under the [MIT License](LICENSE).
