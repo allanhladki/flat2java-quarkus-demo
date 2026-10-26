@@ -4,6 +4,21 @@ All notable changes to this project are documented in this file. The format foll
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [Semantic Versioning](https://semver.org/). Versions follow the flat2java version they demonstrate.
 
+## [Unreleased]
+
+### Added
+
+- A home page at `/` with links, the versions and a playground that calls `/read` and `/write`. It
+  has no external resources. `GET /info` reports the versions it shows.
+- A startup banner, and a report with the versions of the application, flat2java, Quarkus and Java
+  and the addresses of the Swagger UI, the OpenAPI document and the health check.
+
+### Changed
+
+- The console log has aligned columns (time, level, request ID, class, message) and the first 8
+  characters of the request ID. Dev mode adds colors; the other profiles write plain text.
+- The "started" line of Quarkus is hidden, because the startup report replaces it.
+
 ## [0.1.0] - 2026-10-26
 
 Initial release. Requires Java 21. Built on flat2java 0.1.0 and Quarkus 3.40 (LTS).
@@ -47,4 +62,5 @@ Initial release. Requires Java 21. Built on flat2java 0.1.0 and Quarkus 3.40 (LT
 - Release workflow that creates a signed tag and a GitHub release from a pull request labeled
   `release`.
 
+[Unreleased]: https://github.com/allanhladki/flat2java-quarkus-demo/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/allanhladki/flat2java-quarkus-demo/releases/tag/v0.1.0
